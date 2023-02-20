@@ -131,3 +131,22 @@ popz = 100
 pop = []
 for i in range(popz):
     pop.append(initializeChromosome())
+
+def separateChromosome(chromosome):
+    sem2 = {}
+    sem4 = {}
+    sem6 = {}
+    sem8 = {}
+    dayMap = {1:"Mon", 2:"Tue" , 3:"Wed" , 4:"Thurs" , 5:"Fri"}
+    for i in range(len(chromosome)):
+        
+        sem2[dayMap[i+1]] = []
+        sem4[dayMap[i+1]] = []
+        sem6[dayMap[i+1]] = []
+        sem8[dayMap[i+1]] = []
+        for  slot in chromosome[i]:
+            sem2[dayMap[i+1]].append(slot[0])
+            sem4[dayMap[i+1]].append(slot[1])
+            sem6[dayMap[i+1]].append(slot[2])
+            sem8[dayMap[i+1]].append(slot[3])
+    return sem2,sem4,sem6,sem8

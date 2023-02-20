@@ -1,5 +1,6 @@
 import itertools
 from initialization import *
+from math import ceil
 # No Faculty should have been assigned two different classes at same time ( in same slot of day )
 # No Lab should be assigned to two different batches at same time
 
@@ -11,39 +12,78 @@ def returnFit(x):
 def repairLost(chromosome):
 
     courseCred = dict(zip(cp['Course_Code'], cp['NOCW']))
+    #print(courseCred, "\n\n\n\nMAin")
 
     for day in chromosome:
-            for slot in day:
-                for sub in slot:
-                    if sub!='' and sub in courseCred:
-                        courseCred[sub]-=1
-                        if courseCred[sub] == 0:
-                            del courseCred[sub]
-                    elif sub!='' and sub not in courseCred:
-                        slot[slot.index(sub)] = ''
+        
+        for slot in day:
+            for sub in slot:
+
+                if sub!='' and sub in courseCred:
+                    courseCred[sub]-=1
+                    if courseCred[sub] == 0:
+                        del courseCred[sub]
+                elif sub!='' and sub not in courseCred:
+                    slot[slot.index(sub)] = ''
+    
     
     # Create a dictionary of missing classes for each batch
-    missing_class_batch = {}
-    for sub, cred in courseCred.items():
-        if subject_batch_ind_dict[sub] not in missing_class_batch:
-            missing_class_batch[subject_batch_ind_dict[sub]] = [sub]
-        else:
-            missing_class_batch[subject_batch_ind_dict[sub]].append(sub)
+    
+    missing_class_batch = {1:[],2:[], 3:[], 4:[]}
+    for sub in courseCred.keys():
+        missing_class_batch[subject_batch_ind_dict[sub]//2].append(sub)
+        # if subject_batch_ind_dict[sub] not in missing_class_batch:
+        #     missing_class_batch[subject_batch_ind_dict[sub]] = [sub]
+        # else:
+        #     missing_class_batch[subject_batch_ind_dict[sub]].append(sub)
+    
 
-    # Assign missing classes to empty slots
-    for day in chromosome:
-        for slot in day:
-            for i, sub in enumerate(slot):
-                if not sub:
-                    if ((i*2)+2) in missing_class_batch:
-                        sb = random.choice(missing_class_batch[(i*2)+2])
-                        slot[i] = sb
-                        courseCred[sb] -= 1
-                        if courseCred[sb] == 0:
-                            del courseCred[sb]
-                            missing_class_batch[((i*2)+2)].remove(sb)
-                            if not missing_class_batch[(i*2)+2]:
-                                del missing_class_batch[(i*2)+2]
+    # Storing empty slots of each batch
+    missing_slot = {1:[],2:[],3:[],4:[]}
+    chromosome = weektoslots(chromosome)
+    for slotNo , slot in enumerate(chromosome):
+        for i, sub in enumerate(slot):
+            if not sub:
+                missing_slot[i+1].append(slotNo)
+        
+
+    
+
+    chromosome = slotstoweek(chromosome)
+
+    for i , slots in missing_slot.items():
+        while missing_class_batch[i]:
+            j = random.choice(slots)
+            missing_slot[i].remove(j)
+            day = ceil(j/6)
+            slot = j%6
+            if slot == 0:
+                slot = 6
+            sub = random.choice(missing_class_batch[i])
+            courseCred[sub]-=1
+            
+            if courseCred[sub] == 0:
+                missing_class_batch[i].remove(sub)
+            chromosome[day-1][slot-1][i-1] = sub
+        
+        
+            
+
+
+    # # Assign missing classes to empty slots
+    # for day in chromosome:
+    #     for slot in day:
+    #         for i, sub in enumerate(slot):
+    #             if not sub:
+    #                 if ((i*2)+2) in missing_class_batch:
+    #                     sb = random.choice(missing_class_batch[(i*2)+2])
+    #                     slot[i] = sb
+    #                     courseCred[sb] -= 1
+    #                     if courseCred[sb] == 0:
+    #                         del courseCred[sb]
+    #                         missing_class_batch[((i*2)+2)].remove(sb)
+    #                         if not missing_class_batch[(i*2)+2]:
+    #                             del missing_class_batch[(i*2)+2]
                 
     
 
@@ -51,8 +91,37 @@ def repairLost(chromosome):
 def fitnessFunction(chromosome):
     conflicts = []
     fitness_value = 0
+    y1 , y2 , y3 , y4 = separateChromosome(chromosome)
+
+    # print("\n\n\n\n\n\nBefore repair\n\n")
+    # print("\n\n\n\nFirst year\n")
+    # for k , v in y1.items():
+    #     print(k,v)
+    # print("\nSecond year\n")
+    # for k , v in y2.items():
+    #     print(k,v)
+    # print("\nthird year\n")
+    # for k , v in y3.items():
+    #     print(k,v)
+    # print("\nfourth year\n")
+    # for k , v in y4.items():
+    #     print(k,v)
 
     repairLost(chromosome)
+
+    # print("\n\n\n\n\n\nAfter repair\n\n")
+    # print("\n\n\n\nFirst year\n")
+    # for k , v in y1.items():
+    #     print(k,v)
+    # print("\nSecond year\n")
+    # for k , v in y2.items():
+    #     print(k,v)
+    # print("\nthird year\n")
+    # for k , v in y3.items():
+    #     print(k,v)
+    # print("\nfourth year\n")
+    # for k , v in y4.items():
+    #     print(k,v)
     def hardConstraints(week):
 
         

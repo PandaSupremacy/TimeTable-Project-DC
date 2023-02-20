@@ -14,7 +14,7 @@ while generations!=0:
 
     temppop = pop.copy()
     while temppop!=[]:
-        childrens = uniformCrossover(temppop)
+        childrens = crossoverIW(temppop)
         if childrens!=[]:
             o1,o2 = childrens[0],childrens[1]
             childrenpop.append(o1)
@@ -38,24 +38,7 @@ while generations!=0:
     # import os, psutil; print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
 
 
-def separateChromosome(chromosome):
-    sem2 = {}
-    sem4 = {}
-    sem6 = {}
-    sem8 = {}
-    dayMap = {1:"Mon", 2:"Tue" , 3:"Wed" , 4:"Thurs" , 5:"Fri"}
-    for i in range(len(chromosome)):
-        
-        sem2[dayMap[i+1]] = []
-        sem4[dayMap[i+1]] = []
-        sem6[dayMap[i+1]] = []
-        sem8[dayMap[i+1]] = []
-        for  slot in chromosome[i]:
-            sem2[dayMap[i+1]].append(slot[0])
-            sem4[dayMap[i+1]].append(slot[1])
-            sem6[dayMap[i+1]].append(slot[2])
-            sem8[dayMap[i+1]].append(slot[3])
-    return sem2,sem4,sem6,sem8
+
                  
     
 
