@@ -4,7 +4,7 @@ from fitness import *
 from crossover import *
 
 st = time.time()
-generations = 100
+generations = 2
 gnc = 1
 while generations!=0:
     generations -= 1

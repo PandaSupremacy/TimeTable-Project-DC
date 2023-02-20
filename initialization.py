@@ -127,7 +127,7 @@ def slotstoweek(slotting):
     return pcweek
 
 # Create a population 
-popz = 100
+popz = 2
 pop = []
 for i in range(popz):
     pop.append(initializeChromosome())
